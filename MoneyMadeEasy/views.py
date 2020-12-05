@@ -100,17 +100,17 @@ def expenses(request):
     })
 
 
-# TODO
+# Links to loan-related calculations
 def loan_calc(request):
     return render(request, "MoneyMadeEasy/loan_calc.html")
 
 
-# TODO
+# Calculate payments on a new loan
 def loan_new(request):
     return render(request, "MoneyMadeEasy/loan_new.html")
 
 
-# TODO
+# Calculate adjusted payments after refinancing an existing loan
 def loan_refinance(request):
     return render(request, "MoneyMadeEasy/loan_refinance.html")
 

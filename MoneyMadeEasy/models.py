@@ -7,7 +7,7 @@ class User(AbstractUser):
     goal_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_expenses = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-# TODO
+# Model for all expenses (fixed/recurring expenses, loans, etc.)
 class Expense(models.Model):
     name = models.CharField(max_length=128)
     category = models.CharField(max_length=64)
