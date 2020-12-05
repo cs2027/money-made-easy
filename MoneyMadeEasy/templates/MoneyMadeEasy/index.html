@@ -1,0 +1,7 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <h4>Welcome, {{ request.user.username }}!</h4>
+
+    <a href="{% url 'logout' %}">Log Out</a>
+{% endblock %}

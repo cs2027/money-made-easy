@@ -1,0 +1,18 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <!-- Error message for a failed login attempt -->
+    {% if message %}
+        {{ message }}
+    {% endif %}
+
+    <!-- Login form -->
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" value="Login">
+    </form>
+
+    <a href="{% url 'register' %}">New User?</a>
+{% endblock %}

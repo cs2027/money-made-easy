@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Custom user model for `MoneyMadeEasy` app
+AUTH_USER_MODEL = 'MoneyMadeEasy.User'
 
 # Application definition
 
