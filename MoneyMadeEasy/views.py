@@ -87,7 +87,7 @@ def logout_page(request):
     })
 
 
-# TODO
+# Display profile info associated with current user
 def profile(request):
     return render(request, "MoneyMadeEasy/profile.html")
 
@@ -115,6 +115,27 @@ def loan_refinance(request):
 # TODO
 def visual(request):
     return render(request, "MoneyMadeEasy/visual.html")
+
+
+# Edit current user's profile info
+def edit_profile(request):
+    if request.method == "POST":
+        # Parse form fields/data
+        user_ID = int(request.POST["user_ID"])
+        user = User.objects.get(id=user_ID)
+        new_DI = request.POST["new_DI"]
+        new_GS = request.POST["new_GS"]
+
+        # Update monthly disposable income and goal savings
+        user.monthly_DI = new_DI
+        user.goal_savings = new_GS
+        user.save()
+
+        # Return to profile page
+        return HttpResponseRedirect(reverse("profile"))
+
+    # For a 'GET' request, display the "edit profile" page
+    return render(request, "MoneyMadeEasy/edit_profile.html")
 
 
 

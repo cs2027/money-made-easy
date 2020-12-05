@@ -4,7 +4,8 @@
     <h3>Monthly Summary</h3>
     <ul>
         <li>Disposable Income: ${{ request.user.monthly_DI }}</li>
-        <li>Savings Goal: ${{ request.user.savings_goal }}</li>
+        <li>Savings Goal: ${{ request.user.goal_savings }}</li>
         <li>Expenses: ${{ request.user.expenses }}</li>
     </ul>
+    <a href="{% url 'edit_profile' %}">Edit Profile</a>
 {% endblock %}

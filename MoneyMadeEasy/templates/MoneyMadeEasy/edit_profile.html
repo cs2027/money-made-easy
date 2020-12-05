@@ -1,0 +1,24 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <!-- Form to update profile info (monthly disposable income, goal savings) -->
+    <form action="{% url 'edit_profile' %}" method="POST">
+        {% csrf_token %}
+        <h3>Monthly Summary</h3>
+        <ul>
+            <input type="hidden" name="user_ID" value="{{ request.user.id }}">
+            <li>
+                Disposable Income ($): <input type="number" name="new_DI" placeholder="Disposable Income ($)" value="{{ request.user.monthly_DI }}">
+            </li>
+            <li>
+                Goal Savings ($): <input type="number" name="new_GS" placeholder="Goal Savings ($)" value="{{ request.user.goal_savings }}">
+            </li>
+            <li>
+                <a href="{% url 'expenses' %}">Edit Your Monthly Expenses</a>
+            </li>
+        </ul>
+        <input type="submit" value="Update Profile">
+    </form>
+    <br>
+    <a href="{% url 'profile' %}">Return to Profile</a>
+{% endblock %}

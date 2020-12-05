@@ -4,9 +4,18 @@
     <!-- TODO -->
     <form action="{% url 'loan_new' %}" method="POST">
         {% csrf_token %}
-        <input type="number" name="amount" placeholder="Loan Amount ($)">
-        <input type="number" name="int_rate" placeholder="Annual Interest Rate (%)">
-        <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
+        <h3>Calculate a New Loan</h3>
+        <ul>
+            <li>
+                Loan Amount ($): <input type="number" name="amount" placeholder="Loan Amount ($)">
+            </li>
+            <li>
+                Annual Interest Rate (%): <input type="number" name="int_rate" placeholder="Annual Interest Rate (%)">
+            </li>
+            <li>
+                Loan Period (Yrs.): <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
+            </li>
+        </ul>
         <input type="submit" value="Calculate Monthly Payment">
     </form>
     <h4>Monthly Payment:</h4>

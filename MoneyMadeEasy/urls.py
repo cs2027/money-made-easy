@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # TODO
+    # Pages to view information (profile, current expenses, etc.)
     path("", views.index, name="index"),
     path("register", views.register, name="register"),
     path("login_page", views.login_page, name="login"),
@@ -14,5 +14,6 @@ urlpatterns = [
     path("loan_refinance", views.loan_refinance, name="loan_refinance"),
     path("visual", views.visual, name="visual"),
 
-    # TODO
+    # Pages to make edits (update profile, add new expenses, etc.)
+    path("edit_profile", views.edit_profile, name="edit_profile")
 ]

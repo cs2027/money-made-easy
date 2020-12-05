@@ -4,7 +4,7 @@ from django.db import models
 # Custom User model
 class User(AbstractUser):
     monthly_DI = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    savings_goal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    goal_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     expenses = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 # Fixed/recurring expenses (insurance, utility bills, groceries, etc.)

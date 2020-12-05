@@ -4,13 +4,28 @@
     <!-- TODO -->
     <form action="{% url 'loan_refinance' %}" method="POST">
         {% csrf_token %}
-        <input type="number" name="amount_old" placeholder="Original Loan Amount ($)">
-        <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
-        <input type="number" name="IR_old" placeholder="Original Annual Interest Rate (%)">
-        <input type="number" name="num_payments" placeholder="Number of Payments Made">
-        <input type="number" name="payment_old" placeholder="Original Monthly Payment ($)">
-        <hr>
-        <input type="number" name="IR_new" placeholder="New Annual Interest Rate (%)">
+        <h3>Refinance an Existing Loan</h3>
+        <ul>
+            <li>
+                Original Loan Amount ($): <input type="number" name="amount_old" placeholder="Original Loan Amount ($)">
+            </li>
+            <li>
+                Loan Period (Yrs): <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
+            </li>
+            <li>
+                Original Annual IR (%): <input type="number" name="IR_old" placeholder="Original Annual Interest Rate (%)">
+            </li>
+            <li>
+                Number of Payments Made: <input type="number" name="num_payments" placeholder="Number of Payments Made">
+            </li>
+            <li>
+                Original Monthly Payment ($): <input type="number" name="payment_old" placeholder="Original Monthly Payment ($)">
+            </li>
+            <hr>
+            <li>
+                New Annual IR (%): <input type="number" name="IR_new" placeholder="New Annual Interest Rate (%)">
+            </li>
+        </ul>
     </form>
     <h4>New Monthly Payment: $</h4>
     <a href="{% url 'loan_new' %}">Calculate a New Loan?</a>
