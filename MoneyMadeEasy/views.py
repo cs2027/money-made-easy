@@ -92,9 +92,8 @@ def profile(request):
     return render(request, "MoneyMadeEasy/profile.html")
 
 
-# TODO
+# View all monthly expenses
 def expenses(request):
-    # TODO
     expenses = request.user.expenses.all()
     return render(request, "MoneyMadeEasy/expenses.html", {
         "expenses": expenses
@@ -176,18 +175,74 @@ def add_expense(request):
         new_expense.save()
 
         # Update the user's profile (total monthly expenses)
-        expenses = user.expenses.all()
-        total_expenses = 0
-
-        for expense in expenses:
-            total_expenses += expense.amount
-        
-        user.total_expenses = total_expenses
-        user.save()
+        update_expenses(user)
 
         # Display all of the user's expenses (including the new one)
         return HttpResponseRedirect(reverse("expenses"))
 
     # For a 'GET' request, display the form to add a new expense
     return render(request, "MoneyMadeEasy/add_expense.html")
+
+
+# Edit an existing expense
+def edit_expense(request, expense_ID):
+    # Obtain the desired expense object
+    expense = Expense.objects.get(id=expense_ID)
+
+    # Go here for 'POST' requests
+    if request.method == "POST":
+        # Obtain relevant info about current user & expense
+        user_ID = int(request.POST["user_ID"])
+        user = User.objects.get(id=user_ID)
+        name = request.POST["name"]
+        category = request.POST["category"]
+        amount = request.POST["amount"]
+        outstanding = 0
+        int_rate = 0
+        term_len = 0
+
+        if not request.POST["outstanding"]:
+            pass
+        else:
+            outstanding = request.POST["outstanding"]
+
+        if not request.POST["int_rate"]:
+            pass
+        else:
+            int_rate = request.POST["int_rate"]
+
+        if not request.POST["term_len"]:
+            pass
+        else:
+            term_len = request.POST["term_len"]
+
+        # Update the desired expense object
+        expense.name = name
+        expense.category = category
+        expense.amount = amount
+        expense.outstanding = outstanding
+        expense.int_rate = int_rate
+        expense.term_len = term_len
+        expense.save()
+
+        # Update the user's profile (total expenses) & reload updated list of expenses
+        update_expenses(user)
+        return HttpResponseRedirect(reverse("expenses"))
+
+    # For a 'GET' request, display the form to edit an existing expense
+    return render(request, "MoneyMadeEasy/edit_expense.html", {
+        "expense": expense
+    })
+
+
+# Helper function to update a user's total monthly expenses
+def update_expenses(user):
+    expenses = user.expenses.all()
+    total_expenses = 0
+
+    for expense in expenses:
+        total_expenses += expense.amount
+    
+    user.total_expenses = total_expenses
+    user.save()
 

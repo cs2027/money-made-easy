@@ -18,7 +18,7 @@ class Expense(models.Model):
     term_len = models.DecimalField(max_digits=4, decimal_places=2, blank=True)
 
     def __str__(self):
-        return f"{self.name}: ${self.amount}/month ({self.belongs_to.username})"
+        return f"{self.name}: ${self.amount}/Month ({self.belongs_to.username})"
 
 
     

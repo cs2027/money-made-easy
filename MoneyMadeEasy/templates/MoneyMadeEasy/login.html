@@ -1,9 +1,10 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 
 {% block body %}
-    <!-- Error message for a failed login attempt -->
+    <!-- Error message for a failed login attempt OR logout message-->
     {% if message %}
         {{ message }}
+        <br>
     {% endif %}
 
     <!-- Login form -->

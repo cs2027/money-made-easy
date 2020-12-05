@@ -4,7 +4,9 @@
     <h3>Monthly Expenses</h3>
     <ul>
         {% for expense in expenses %}
-            <li>Name: {{ expense.name }}, Category: {{ expense.category }}, Amount ($): ${{ expense.amount }}</li>
+            <a href="{% url 'edit_expense' expense.id %}">
+                <li>Name: {{ expense.name }}, Category: {{ expense.category }}, Amount ($): ${{ expense.amount }}</li>
+            </a>
         {% empty %}
             <li>No expenses so far!</li>
         {% endfor %}

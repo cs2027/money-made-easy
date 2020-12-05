@@ -16,5 +16,6 @@ urlpatterns = [
 
     # Pages to make edits (update profile, add new expenses, etc.)
     path("edit_profile", views.edit_profile, name="edit_profile"),
-    path("add_expense", views.add_expense, name="add_expense")
+    path("add_expense", views.add_expense, name="add_expense"),
+    path("edit_expense/<int:expense_ID>", views.edit_expense, name="edit_expense")
 ]
