@@ -1,0 +1,17 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <!-- TODO -->
+    <form action="{% url 'loan_refinance' %}" method="POST">
+        {% csrf_token %}
+        <input type="number" name="amount_old" placeholder="Original Loan Amount ($)">
+        <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
+        <input type="number" name="IR_old" placeholder="Original Annual Interest Rate (%)">
+        <input type="number" name="num_payments" placeholder="Number of Payments Made">
+        <input type="number" name="payment_old" placeholder="Original Monthly Payment ($)">
+        <hr>
+        <input type="number" name="IR_new" placeholder="New Annual Interest Rate (%)">
+    </form>
+    <h4>New Monthly Payment: $</h4>
+    <a href="{% url 'loan_new' %}">Calculate a New Loan?</a>
+{% endblock %}

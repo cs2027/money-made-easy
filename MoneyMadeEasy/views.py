@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.db import IntegrityError
-from .models import User
+from .models import User, SimpleExpense, Loan
 
 
 # Initial landing page for users
@@ -85,6 +85,36 @@ def logout_page(request):
     return render(request, "MoneyMadeEasy/login.html", {
         "message": "You have now logged out."
     })
+
+
+# TODO
+def profile(request):
+    return render(request, "MoneyMadeEasy/profile.html")
+
+
+# TODO
+def expenses(request):
+    return render(request, "MoneyMadeEasy/expenses.html")
+
+
+# TODO
+def loan_calc(request):
+    return render(request, "MoneyMadeEasy/loan_calc.html")
+
+
+# TODO
+def loan_new(request):
+    return render(request, "MoneyMadeEasy/loan_new.html")
+
+
+# TODO
+def loan_refinance(request):
+    return render(request, "MoneyMadeEasy/loan_refinance.html")
+
+
+# TODO
+def visual(request):
+    return render(request, "MoneyMadeEasy/visual.html")
 
 
 

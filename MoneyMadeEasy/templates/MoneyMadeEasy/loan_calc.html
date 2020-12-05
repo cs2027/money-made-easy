@@ -1,0 +1,10 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <li>
+        <a href="{% url 'loan_new' %}">Calculate a New Loan</a>
+    </li>
+    <li>
+        <a href="{% url 'loan_refinance' %}">Refinance an Existing Loan</a>
+    </li>
+{% endblock %}

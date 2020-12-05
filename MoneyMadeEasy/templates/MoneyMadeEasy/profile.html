@@ -1,0 +1,10 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <h3>Monthly Summary</h3>
+    <ul>
+        <li>Disposable Income: ${{ request.user.monthly_DI }}</li>
+        <li>Savings Goal: ${{ request.user.savings_goal }}</li>
+        <li>Expenses: ${{ request.user.expenses }}</li>
+    </ul>
+{% endblock %}

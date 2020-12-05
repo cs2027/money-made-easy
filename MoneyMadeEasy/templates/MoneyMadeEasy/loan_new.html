@@ -1,0 +1,14 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <!-- TODO -->
+    <form action="{% url 'loan_new' %}" method="POST">
+        {% csrf_token %}
+        <input type="number" name="amount" placeholder="Loan Amount ($)">
+        <input type="number" name="int_rate" placeholder="Annual Interest Rate (%)">
+        <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
+        <input type="submit" value="Calculate Monthly Payment">
+    </form>
+    <h4>Monthly Payment:</h4>
+    <a href="{% url 'loan_refinance' %}">Refinance a Loan Instead?</a>
+{% endblock %}

@@ -9,10 +9,10 @@
     <!-- Registration form for new users -->
     <form action="{% url 'register' %}" method="POST">
         {% csrf_token %}
-        <input type="text", name="username", placeholder="Username">
-        <input type="password", name="password", placeholder="Password">
-        <input type="password", name="password_confirm", placeholder="Password (Confirm)">
-        <input type="submit", value="Register">
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <input type="password" name="password_confirm" placeholder="Password (Confirm)">
+        <input type="submit" value="Register">
     </form>
 
     <a href="{% url 'login' %}">Return to Login Page</a>

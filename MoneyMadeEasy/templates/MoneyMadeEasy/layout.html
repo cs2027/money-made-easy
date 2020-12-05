@@ -7,6 +7,19 @@
     </head>
     <body>
         <h2>Money Made Easy</h2>
+        <h3>
+            Logged in As: <a href="{% url 'index' %}">{{ request.user.username }}</a>
+        </h3>
+        <h3>
+            <a href="{% url 'logout' %}">Log Out</a>
+        </h3>
+        <hr>
+        <div>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'expenses' %}">Monthly Expenses</a>
+            <a href="{% url 'loan_calc' %}">Mortgage/Loan Calculator</a>
+            <a href="{% url 'visual' %}">Visualize Your Expenses</a>
+        </div>
         {% block body %}
         {% endblock %}
     </body>
