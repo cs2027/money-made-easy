@@ -7,6 +7,7 @@
     </head>
     <body>
         <h2>Money Made Easy</h2>
+        {% if request.user.is_authenticated %}
         <h3>
             Logged in As: <a href="{% url 'index' %}">{{ request.user.username }}</a>
         </h3>
@@ -20,7 +21,7 @@
             <a href="{% url 'loan_calc' %}">Mortgage/Loan Calculator</a>
             <a href="{% url 'visual' %}">Visualize Your Expenses</a>
         </div>
-        <br>
+        {% endif %}
         {% block body %}
         {% endblock %}
     </body>

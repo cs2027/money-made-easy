@@ -1,4 +1,13 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 
 {% block body %}
+    <h3>Monthly Expenses</h3>
+    <ul>
+        {% for expense in expenses %}
+            <li>Name: {{ expense.name }}, Category: {{ expense.category }}, Amount ($): ${{ expense.amount }}</li>
+        {% empty %}
+            <li>No expenses so far!</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_expense' %}">Add a New Expense</a>
 {% endblock %}

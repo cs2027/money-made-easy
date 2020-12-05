@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.db import IntegrityError
-from .models import User, SimpleExpense, Loan
+from .models import User, Expense
 
 
 # Initial landing page for users
@@ -94,7 +94,11 @@ def profile(request):
 
 # TODO
 def expenses(request):
-    return render(request, "MoneyMadeEasy/expenses.html")
+    # TODO
+    expenses = request.user.expenses.all()
+    return render(request, "MoneyMadeEasy/expenses.html", {
+        "expenses": expenses
+    })
 
 
 # TODO
@@ -138,4 +142,52 @@ def edit_profile(request):
     return render(request, "MoneyMadeEasy/edit_profile.html")
 
 
+# Add new monthly expenses (both loans & fixed costs)
+def add_expense(request):
+    if request.method == "POST":
+        # Parse data regarding the new expense
+        user_ID = int(request.POST["user_ID"])
+        user = User.objects.get(id=user_ID)
+        name = request.POST["name"]
+        category = request.POST["category"]
+        amount = request.POST["amount"]
+        outstanding = 0
+        int_rate = 0
+        term_len = 0
+
+        # Parse optional data if the expense was a loan
+        if not request.POST["outstanding"]:
+            pass
+        else:
+            outstanding = request.POST["outstanding"]
+
+        if not request.POST["int_rate"]:
+            pass
+        else:
+            int_rate = request.POST["int_rate"]
+
+        if not request.POST["term_len"]:
+            pass
+        else:
+            term_len = request.POST["term_len"]
+
+        # Create and save the new expense object to the database
+        new_expense = Expense.objects.create(name=name, category=category, amount=amount, belongs_to=user, outstanding=outstanding, int_rate=int_rate, term_len=term_len)
+        new_expense.save()
+
+        # Update the user's profile (total monthly expenses)
+        expenses = user.expenses.all()
+        total_expenses = 0
+
+        for expense in expenses:
+            total_expenses += expense.amount
+        
+        user.total_expenses = total_expenses
+        user.save()
+
+        # Display all of the user's expenses (including the new one)
+        return HttpResponseRedirect(reverse("expenses"))
+
+    # For a 'GET' request, display the form to add a new expense
+    return render(request, "MoneyMadeEasy/add_expense.html")
 

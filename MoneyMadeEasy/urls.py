@@ -15,5 +15,6 @@ urlpatterns = [
     path("visual", views.visual, name="visual"),
 
     # Pages to make edits (update profile, add new expenses, etc.)
-    path("edit_profile", views.edit_profile, name="edit_profile")
+    path("edit_profile", views.edit_profile, name="edit_profile"),
+    path("add_expense", views.add_expense, name="add_expense")
 ]
