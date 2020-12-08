@@ -1,5 +1,57 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 
+<!-- Common styling over entire page -->
+{% block style %}
+<style>
+    .rectangle {
+        width: 100px;
+        text-align: center;
+        background-color:lightblue;
+    }
+
+    .boundary {
+        margin: 0px;
+        padding: 0px;
+        width: 96px;
+        margin-right: auto;
+        border: 2px solid black;
+    }
+
+    p {
+        margin: 0px;
+    }
+</style>
+{% endblock %}
+
+<!-- Rectangle height = proportional to expense amount -->
+{% block script %}
+<script>
+    amounts = {{ amounts }};
+    avg = {{ avg }};
+
+    document.addEventListener('DOMContentLoaded', function() {
+        for(var i = 0, length = amounts.length; i < length; i++) {
+            scaled_height = Math.round(100 * (amounts[i] / avg));
+            padding = Math.max(0, Math.round((scaled_height - 35) / 2));
+
+            height_str = `${scaled_height}` + "px";
+            padding_str = `${padding}` + "px";
+
+            document.getElementById(`expense${i}`).style.height = height_str;
+            document.getElementById(`text${i}`).style.paddingTop = padding_str;
+        }; 
+    });
+</script>
+{% endblock %}
+
 {% block body %}
-    <h2>// TODO</h2>
+    <h3><u>Visualize Your Expenses</u></h3>
+    {% for expense in expenses %}
+        <div class="rectangle" id="expense{{ forloop.counter0 }}">
+            <p id="text{{ forloop.counter0 }}">{{ expense.name }} (${{ expense.amount }})</p>
+        </div>
+        <hr class="boundary">
+    {% empty %}
+        No expenses so far!
+    {% endfor %}
 {% endblock %}

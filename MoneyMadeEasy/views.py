@@ -115,9 +115,21 @@ def loan_refinance(request):
     return render(request, "MoneyMadeEasy/loan_refinance.html")
 
 
-# TODO
+# Visual representation of monthly expenses
 def visual(request):
-    return render(request, "MoneyMadeEasy/visual.html")
+    expenses = request.user.expenses.all()
+    amounts = []
+
+    for expense in expenses:
+        amounts.append(float(expense.amount))
+
+    avg = sum(amounts) / len(amounts)
+
+    return render(request, "MoneyMadeEasy/visual.html", {
+        "expenses": expenses,
+        "amounts": amounts,
+        "avg": avg
+    })
 
 
 # Edit current user's profile info
@@ -150,28 +162,9 @@ def add_expense(request):
         name = request.POST["name"]
         category = request.POST["category"]
         amount = request.POST["amount"]
-        outstanding = 0
-        int_rate = 0
-        term_len = 0
-
-        # Parse optional data if the expense was a loan
-        if not request.POST["outstanding"]:
-            pass
-        else:
-            outstanding = request.POST["outstanding"]
-
-        if not request.POST["int_rate"]:
-            pass
-        else:
-            int_rate = request.POST["int_rate"]
-
-        if not request.POST["term_len"]:
-            pass
-        else:
-            term_len = request.POST["term_len"]
 
         # Create and save the new expense object to the database
-        new_expense = Expense.objects.create(name=name, category=category, amount=amount, belongs_to=user, outstanding=outstanding, int_rate=int_rate, term_len=term_len)
+        new_expense = Expense.objects.create(name=name, category=category, amount=amount, belongs_to=user)
         new_expense.save()
 
         # Update the user's profile (total monthly expenses)
@@ -197,32 +190,11 @@ def edit_expense(request, expense_ID):
         name = request.POST["name"]
         category = request.POST["category"]
         amount = request.POST["amount"]
-        outstanding = 0
-        int_rate = 0
-        term_len = 0
-
-        if not request.POST["outstanding"]:
-            pass
-        else:
-            outstanding = request.POST["outstanding"]
-
-        if not request.POST["int_rate"]:
-            pass
-        else:
-            int_rate = request.POST["int_rate"]
-
-        if not request.POST["term_len"]:
-            pass
-        else:
-            term_len = request.POST["term_len"]
 
         # Update the desired expense object
         expense.name = name
         expense.category = category
         expense.amount = amount
-        expense.outstanding = outstanding
-        expense.int_rate = int_rate
-        expense.term_len = term_len
         expense.save()
 
         # Update the user's profile (total expenses) & reload updated list of expenses
@@ -233,6 +205,15 @@ def edit_expense(request, expense_ID):
     return render(request, "MoneyMadeEasy/edit_expense.html", {
         "expense": expense
     })
+
+
+# TODO
+def remove_expense(request, expense_ID):
+    expense = Expense.objects.get(id=expense_ID)
+    expense.delete()
+    
+    update_expenses(request.user)
+    return HttpResponseRedirect(reverse("expenses"))
 
 
 # Helper function to update a user's total monthly expenses

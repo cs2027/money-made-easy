@@ -7,6 +7,11 @@
             <a href="{% url 'edit_expense' expense.id %}">
                 <li>Name: {{ expense.name }}, Category: {{ expense.category }}, Amount ($): ${{ expense.amount }}</li>
             </a>
+            <ul>
+                <a href="{% url 'remove_expense' expense.id %}">
+                    <li>Remove this expense</li>
+                </a>
+            </ul>
         {% empty %}
             <li>No expenses so far!</li>
         {% endfor %}

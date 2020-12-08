@@ -20,18 +20,6 @@
                 Amount ($): <input type="number" name="amount" placeholder="Amount ($)" value="{{ expense.amount }}">
             </li>
         </ul>
-        <h4>Below are optional fields that can be filled out for loans (mortgages, student debt, etc.)</h4>
-        <ul>
-            <li>
-                Loan Amount ($): <input type="number" name="outstanding" placeholder="Loan Amount ($)" value="{{ expense.outstanding }}">
-            </li>
-            <li>
-                Loan IR (%): <input type="number" name="int_rate" placeholder="Annual IR (%)" value="{{ expense.int_rate }}">
-            </li>
-            <li>
-                Loan Term Length (Yrs): <input type="number" name="term_len" placeholder="Term Length (Yrs)" value="{{ expense.term_len }}">
-            </li>
-        </ul>
         <input type="submit" value="Edit Expense">
     </form>
     <br>
