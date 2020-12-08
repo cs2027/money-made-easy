@@ -1,32 +1,175 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 
+<!-- JS section to display refinanced loan payments on screen -->
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('form').onsubmit = function() {
+                // Obtain and parse form data
+                var payment_display = document.getElementById("payment_display"); 
+                var amount = document.getElementById("amount").value;
+                var period = document.getElementById("period").value;
+                var IR_old = document.getElementById("IR_old").value;
+                var frequency = document.getElementById("frequency").value;
+                var start = document.getElementById("start").value;
+                var num_payments = document.getElementById("num_payments").value;
+                var last_payment = document.getElementById("last_payment").value;
+                var next_payment = document.getElementById("next_payment").value;
+                var IR_new = document.getElementById("IR_new").value;
+                
+                // Compute new loan payment & display on screen
+                var payment_old = compute_loan_old(amount, IR_old, period, start, frequency);
+                var loan_outstanding = compute_loan_outstanding(amount, payment_old, IR_old, frequency, start, num_payments, last_payment);
+                var payment_new = compute_loan_new(loan_outstanding, IR_new, frequency, next_payment, period * frequency - num_payments)
+
+                payment_display.innerHTML = `New Monthly Payment: $${payment_new}`;  
+                return false;
+            };
+        });
+
+        // Computes the original loan payment amount
+        function compute_loan_old(amount, int_rate, period, start, frequency) {
+    
+            // Compute periodic interest rate & number of repayments
+            i = (int_rate / 100) / frequency;
+            n = period * frequency;
+
+            // Compute annuity & corresponding payment amount
+            annuity_PV = ((1 - Math.pow((1 + i), -n)) / i);
+              
+            if (start == "deferred") {
+                annuity_PV *= (1 + i);
+            }
+
+            payment = (amount / annuity_PV).toFixed(2);
+            return payment;
+        };
+
+        // Computes the current outstanding loan balance (after `num_payments` payments)
+        function compute_loan_outstanding(loan_original, payment, int_rate, frequency, start, num_payments, last_payment) {
+            
+            // Compute periodic interest rate & equivalent monthly interest rate
+            i = (int_rate / 100) / frequency;
+            i_monthly = Math.pow((1 + i), frequency / 12) - 1;
+
+            // Compute present value of original loan amount
+            loan_original *= Math.pow((1 + i), num_payments);
+            loan_original *= Math.pow((1 + i_monthly), last_payment);
+          
+            // Compute present value of the loan repayments made so far
+            annuity_PV = payment * (Math.pow((1 + i), num_payments) - 1) / i;
+            annuity_PV *= Math.pow((1 + i_monthly), last_payment)
+
+            if (start == "deferred") {
+                loan_original *= (1 + i);
+                annuity_PV *= (1 + i);
+            }
+
+            // Return outstanding loan balance
+            return loan_original - annuity_PV;
+        }
+
+        // Compute new loan payment amount
+        function compute_loan_new(amount, int_rate, frequency, next_payment, remaining_payments) {
+
+            // Compute periodic int. rate, equivalent monthly int. rate, and # payments to go
+            i = (int_rate / 100) / frequency;
+            i_monthly = Math.pow((1 + i), frequency / 12) - 1;
+            n = remaining_payments;
+
+            // Compute outstanding loan balance one period before the first new payment commences
+            scale_factor = Math.pow((1 + i_monthly), next_payment) * Math.pow((1 + i), -1);
+            amount *= scale_factor;
+            
+            // Compute annuity, new payment amount, & return new amount
+            annuity_PV = (1 - Math.pow((1 + i), -n)) / i;
+            payment = (amount / annuity_PV).toFixed(2);
+            return payment;
+        };
+    </script>
+{% endblock %}
+
+<!-- Form to refinance an existing loan w/ a new interest rate -->
 {% block body %}
-    <!-- TODO -->
-    <form action="{% url 'loan_refinance' %}" method="POST">
-        {% csrf_token %}
+    <form>
         <h3>Refinance an Existing Loan</h3>
         <ul>
             <li>
-                Original Loan Amount ($): <input type="number" name="amount_old" placeholder="Original Loan Amount ($)">
+                Original Loan Amount ($): <input type="number" id="amount" placeholder="Original Loan Amount ($)">
             </li>
             <li>
-                Loan Period (Yrs): <input type="number" name="loan_period" placeholder="Loan Period (Yrs.)">
+                Loan Period (Yrs): <input type="number" id="period" placeholder="Loan Period (Yrs.)">
             </li>
             <li>
-                Original Annual IR (%): <input type="number" name="IR_old" placeholder="Original Annual Interest Rate (%)">
+                Original Annual IR (%): <input type="number" id="IR_old" placeholder="Original Annual Interest Rate (%)">
             </li>
             <li>
-                Number of Payments Made: <input type="number" name="num_payments" placeholder="Number of Payments Made">
+                <label for="frequency">Payment Frequency: </label>
+                <select id="frequency">
+                    <option value="0">Select an option...</option>
+                    <option value="12">Monthly</option>
+                    <option value="6">Every Two Months</option>
+                    <option value="4">Every Three Months</option>
+                    <option value="2">Every Six Months</option>
+                    <option value="1">Annually</option>
+                </select>
             </li>
             <li>
-                Original Monthly Payment ($): <input type="number" name="payment_old" placeholder="Original Monthly Payment ($)">
+                <label for="start">First Payment Was: </label>
+                <select id="start">
+                    <option value="none">Select an option...</option>
+                    <option value="immediate">Immediate</option>
+                    <option value="deferred">Deferred</option>
+                </select>
+            </li>
+            <li>
+                Number of Payments Made: <input type="number" id="num_payments" placeholder="Number of Payments Made">
             </li>
             <hr>
             <li>
-                New Annual IR (%): <input type="number" name="IR_new" placeholder="New Annual Interest Rate (%)">
+                <label for="last_payment">Last Payment Was __ Month(s) Ago:</label>
+                <select id="last_payment">
+                    <option value="-1">Select an option...</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            </li>
+            <li>
+                <label for="next_payment">Next Payment Due in __ Month(s):</label>
+                <select id="next_payment">
+                    <option value="-1">Select an option...</option>
+                    <option value="0">Due Immediate</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+            </li>
+            <li>
+                New Annual IR (%): <input type="number" id="IR_new" placeholder="New Annual Interest Rate (%)">
             </li>
         </ul>
+        <input type="submit" value="Calculate New Payment">
     </form>
-    <h4>New Monthly Payment: $</h4>
+    <h4 id="payment_display">New Monthly Payment: $0.00</h4>
     <a href="{% url 'loan_new' %}">Calculate a New Loan?</a>
 {% endblock %}
