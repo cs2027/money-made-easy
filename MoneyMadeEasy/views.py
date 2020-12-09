@@ -117,18 +117,38 @@ def loan_refinance(request):
 
 # Visual representation of monthly expenses
 def visual(request):
+    # Parse current user data (income, savings goal, expenses)
     expenses = request.user.expenses.all()
     amounts = []
 
     for expense in expenses:
         amounts.append(float(expense.amount))
 
-    avg = sum(amounts) / len(amounts)
+    avg = sum(amounts) / len(amounts) # TODO: Error handling in case of 0 expenses
+    total_DI = request.user.monthly_DI
+    savings = request.user.goal_savings
+    remainder = total_DI - savings - request.user.total_expenses 
 
+    # Dispatch based on whether or not the user is over budget
+    if remainder > 0:
+        return render(request, "MoneyMadeEasy/visual.html", {
+            "expenses": expenses,
+            "amounts": amounts,
+            "avg": avg,
+            "total_DI": total_DI,
+            "remainder": remainder,
+            "savings": savings, 
+            "over_budget": False
+        })
+ 
     return render(request, "MoneyMadeEasy/visual.html", {
         "expenses": expenses,
         "amounts": amounts,
-        "avg": avg
+        "avg": avg,
+        "total_DI": total_DI,
+        "remainder": abs(remainder),
+        "savings": savings,
+        "over_budget": True
     })
 
 

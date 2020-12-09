@@ -3,13 +3,32 @@
 <!-- Common styling over entire page -->
 {% block style %}
 <style>
-    .rectangle {
+    .remainder {
+        width: 100px;
+        text-align: center;
+        background-color:lightpink;
+    }
+
+    .savings {
+        width: 100px;
+        text-align: center;
+        background-color:lightgreen;
+    }
+
+    .expense {
         width: 100px;
         text-align: center;
         background-color:lightblue;
     }
 
-    .boundary {
+    .boundary_edge {
+        margin: 0px;
+        padding: 0px;
+        width: 250px;
+        border: 2px solid black;
+    }
+
+    .boundary_std {
         margin: 0px;
         padding: 0px;
         width: 96px;
@@ -23,19 +42,64 @@
 </style>
 {% endblock %}
 
-<!-- Rectangle height = proportional to expense amount -->
+<!-- Rectangle height = proportional to monetary amount -->
 {% block script %}
 <script>
+    // Constants to setup visual representation
+    height = 75;
+    offset = 35;
+    cutoff = 40;
+    min_padding = 2;
+
+    // Parse incoming context data about current user
     amounts = {{ amounts }};
     avg = {{ avg }};
+    remainder = {{ remainder }};
+    savings = {{ savings }};
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Display block for amount of remaining income (or amount over budget)
+        height_rmdr = Math.round(height * (remainder / avg));
+        padding_rmdr = Math.max(min_padding, Math.round((height_rmdr - offset) / 2));
+
+        height_str_rmdr = `${height_rmdr}` + "px";
+        padding_str_rmdr = `${padding_rmdr}` + "px";
+
+        if (height_rmdr < cutoff) {
+            height_ratio = Math.round(100 * (height_rmdr / cutoff));
+            document.getElementById("remainder_txt").style.fontSize = `${height_ratio}` + "%";
+        }
+
+        document.getElementById("remainder").style.height = height_str_rmdr;
+        document.getElementById("remainder_txt").style.paddingTop = padding_str_rmdr;
+
+        // Block for goal savings
+        height_svng = Math.round(height * (savings / avg));
+        padding_svng = Math.max(min_padding, Math.round((height_svng - offset) / 2));
+
+        height_str_svng= `${height_svng}` + "px";
+        padding_str_svng = `${padding_svng}` + "px";
+
+        if (height_svng < cutoff) {
+            height_ratio = Math.round(100 * (height_svng / cutoff));
+            document.getElementById("savings_txt").style.fontSize = `${height_ratio}` + "%";
+        }
+
+        document.getElementById("savings").style.height = height_str_svng;
+        document.getElementById("savings_txt").style.paddingTop = padding_str_svng;
+
+        // Blocks for each monthly expense
         for(var i = 0, length = amounts.length; i < length; i++) {
-            scaled_height = Math.round(100 * (amounts[i] / avg));
-            padding = Math.max(0, Math.round((scaled_height - 35) / 2));
+            scaled_height = Math.round(height * (amounts[i] / avg));
+            padding = Math.max(min_padding, Math.round((scaled_height - offset) / 2));
 
             height_str = `${scaled_height}` + "px";
             padding_str = `${padding}` + "px";
+
+            if (scaled_height < cutoff) {
+                height_ratio = Math.round(100 * (scaled_height / cutoff));
+                document.getElementById(`text${i}`).style.fontSize = `${height_ratio}` + "%";
+            }
 
             document.getElementById(`expense${i}`).style.height = height_str;
             document.getElementById(`text${i}`).style.paddingTop = padding_str;
@@ -45,12 +109,45 @@
 {% endblock %}
 
 {% block body %}
-    <h3><u>Visualize Your Expenses</u></h3>
+    <h3>Visualize Your Expenses</h3>
+
+    <hr class="boundary_edge">
+    {% if over_budget %}
+        <p style="color:red">You are currently over budget by ${{ remainder }}. Here are some suggestions:</p>
+        <ul style="margin:5px">
+            <li>Increase your monthly disposable income by ${{ remainder }}</li>
+            <li>Decrease your goal savings by ${{ remainder }}</li>
+            <li>Reduce your monthly expenses by ${{ remainder }}</li>
+            <li>... or some combination of these three actions</li>
+        </ul>
+    {% else %}
+        <p>Total Disposable Income: ${{ total_DI }}</p>
+    {% endif %}
+    <hr class="boundary_edge">
+
+    {% if over_budget %}
+        <div class="remainder" id="remainder">
+            <p id="remainder_txt">Over Budget (-${{ remainder }})</p>
+        </div>
+    {% else %}
+        <div class="remainder" id="remainder">
+            <p id="remainder_txt">Remaining $$ (${{ remainder }})</p>
+        </div>
+    {% endif %}
+    <hr class="boundary_std">
+
+    <div class="savings" id="savings">
+        <p id="savings_txt">Goal Savings (${{ savings }})</p>
+    </div>
+    <hr class="boundary_std">
+
     {% for expense in expenses %}
-        <div class="rectangle" id="expense{{ forloop.counter0 }}">
+        <div class="expense" id="expense{{ forloop.counter0 }}">
             <p id="text{{ forloop.counter0 }}">{{ expense.name }} (${{ expense.amount }})</p>
         </div>
-        <hr class="boundary">
+        {% if forloop.counter != expenses|length %}
+            <hr class="boundary_std">
+        {% endif %}
     {% empty %}
         No expenses so far!
     {% endfor %}
