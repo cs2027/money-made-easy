@@ -58,20 +58,23 @@
     savings = {{ savings }};
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Display block for amount of remaining income (or amount over budget)
-        height_rmdr = Math.round(height * (remainder / avg));
-        padding_rmdr = Math.max(min_padding, Math.round((height_rmdr - offset) / 2));
+    
+        // Display block for amount of remaining income (or amount over budget), assuming it is nonzero
+        if (remainder != 0) {
+            height_rmdr = Math.round(height * (remainder / avg));
+            padding_rmdr = Math.max(min_padding, Math.round((height_rmdr - offset) / 2));
 
-        height_str_rmdr = `${height_rmdr}` + "px";
-        padding_str_rmdr = `${padding_rmdr}` + "px";
+            height_str_rmdr = `${height_rmdr}` + "px";
+            padding_str_rmdr = `${padding_rmdr}` + "px";
 
-        if (height_rmdr < cutoff) {
-            height_ratio = Math.round(100 * (height_rmdr / cutoff));
-            document.getElementById("remainder_txt").style.fontSize = `${height_ratio}` + "%";
+            if (height_rmdr < cutoff) {
+                height_ratio = Math.round(100 * (height_rmdr / cutoff));
+                document.getElementById("remainder_txt").style.fontSize = `${height_ratio}` + "%";
+            }
+
+            document.getElementById("remainder").style.height = height_str_rmdr;
+            document.getElementById("remainder_txt").style.paddingTop = padding_str_rmdr;
         }
-
-        document.getElementById("remainder").style.height = height_str_rmdr;
-        document.getElementById("remainder_txt").style.paddingTop = padding_str_rmdr;
 
         // Block for goal savings
         height_svng = Math.round(height * (savings / avg));
@@ -122,20 +125,34 @@
         </ul>
     {% else %}
         <p>Total Disposable Income: ${{ total_DI }}</p>
+        {% if remainder == 0 %}
+            <br>
+            <p>NOTE: You currently have exactly $0.00 leftover, i.e. your disposable income exactly balances your savings and expenses.</p>
+        {% endif %}
     {% endif %}
-    <hr class="boundary_edge">
+
+    {% if remainder != 0 %}
+        <hr class="boundary_edge">
+    {% endif %}
 
     {% if over_budget %}
         <div class="remainder" id="remainder">
             <p id="remainder_txt">Over Budget (-${{ remainder }})</p>
         </div>
     {% else %}
-        <div class="remainder" id="remainder">
-            <p id="remainder_txt">Remaining $$ (${{ remainder }})</p>
-        </div>
+        {% if remainder != 0 %}
+            <div class="remainder" id="remainder">
+                <p id="remainder_txt">Remaining $$ (${{ remainder }})</p>
+            </div>
+        {% endif %}
     {% endif %}
-    <hr class="boundary_std">
 
+    {% if remainder == 0 %}
+        <hr class="boundary_edge">
+    {% else %}
+        <hr class="boundary_std">
+    {% endif %}
+    
     <div class="savings" id="savings">
         <p id="savings_txt">Goal Savings (${{ savings }})</p>
     </div>

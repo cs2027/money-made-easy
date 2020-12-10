@@ -124,13 +124,18 @@ def visual(request):
     for expense in expenses:
         amounts.append(float(expense.amount))
 
-    avg = sum(amounts) / len(amounts) # TODO: Error handling in case of 0 expenses
     total_DI = request.user.monthly_DI
     savings = request.user.goal_savings
+
+    # If data is unsufficient (no income/savings info, no expenses), render an alternate template
+    if total_DI == 0 or savings == 0 or len(amounts) == 0:
+        return render(request, "MoneyMadeEasy/visual_error.html")
+
+    avg = sum(amounts) / len(amounts) 
     remainder = total_DI - savings - request.user.total_expenses 
 
-    # Dispatch based on whether or not the user is over budget
-    if remainder > 0:
+    # Else, dispatch based on whether or not the user is over budget
+    if remainder >= 0:
         return render(request, "MoneyMadeEasy/visual.html", {
             "expenses": expenses,
             "amounts": amounts,
@@ -183,6 +188,17 @@ def add_expense(request):
         category = request.POST["category"]
         amount = request.POST["amount"]
 
+        # Error catching in case of invalid inputs
+        if name.strip() == "":
+            return render(request, "MoneyMadeEasy/add_expense.html", {
+                "message": "Error: You cannot have a blank name."
+            })
+        elif category == "None":
+            return render(request, "MoneyMadeEasy/add_expense.html", {
+                "message": "Error: You must select an expense category."
+            })
+
+
         # Create and save the new expense object to the database
         new_expense = Expense.objects.create(name=name, category=category, amount=amount, belongs_to=user)
         new_expense.save()
@@ -211,6 +227,18 @@ def edit_expense(request, expense_ID):
         category = request.POST["category"]
         amount = request.POST["amount"]
 
+        # Error catching in case of invalid inputs
+        if name.strip() == "":
+            return render(request, "MoneyMadeEasy/edit_expense.html", {
+                "expense": expense,
+                "message": "Error: You cannot have a blank name."
+            })
+        elif category == "None":
+            return render(request, "MoneyMadeEasy/edit_expense.html", {
+                "expense": expense,
+                "message": "Error: You must select an expense category."
+            })
+
         # Update the desired expense object
         expense.name = name
         expense.category = category
@@ -227,7 +255,7 @@ def edit_expense(request, expense_ID):
     })
 
 
-# TODO
+# Remove a given `expense` object from the database
 def remove_expense(request, expense_ID):
     expense = Expense.objects.get(id=expense_ID)
     expense.delete()
@@ -246,4 +274,3 @@ def update_expenses(user):
     
     user.total_expenses = total_expenses
     user.save()
-

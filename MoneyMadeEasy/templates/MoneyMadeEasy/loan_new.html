@@ -1,10 +1,12 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 
-<!-- JS Section to display loan repayment amounts on screen -->
+<!-- JS section to (1) compute loan payments and (2) add loans to expenses list -->
 {% block script %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('form').onsubmit = function() {
+
+            // (1) Compute loan payments based on user inputs (principal, int. rate, etc.)
+            document.getElementById("form_compute_loan").onsubmit = function() {
 
                 // Once form is submitted, parse information about loan
                 var payment_display = document.getElementById("payment_display"); 
@@ -14,10 +16,43 @@
                 var start = document.getElementById("start").value;
                 var frequency = document.getElementById("frequency").value;
 
+                // Error catching in case of invalid form inputs
+                if (amount.trim() == "") {
+                    alert("Error: You must indicate the loan amount (principal).");
+                    return false;
+                } else if (int_rate.trim() == "") {
+                    alert("Error: You must indicate the interest rate.");
+                    return false;
+                } else if (period.trim() == "") {
+                    alert("Error: You must indicate the loan term/period.");
+                    return false;
+                } else if (start == "None") {
+                    alert("Error: You must indicate when the first payment occurred.");
+                    return false;
+                } else if (frequency == "None") {
+                    alert("Error: You must indicate the frequency of payments.");
+                    return false;
+                }
+
                 // Compute the loan repayment amount, display on screen
                 var payment = compute_loan(amount, int_rate, period, start, frequency);
                 payment_display.innerHTML = `Monthly Payment: $${payment}`;
+
+                // Update hidden form field (if user wants to add loan to expenses list)
+                document.getElementById("loan_amount").value = `${payment}`;
                 return false;
+            };
+
+            // (2) Prompt user for loan name before adding it to list of expenses
+            document.getElementById("form_add_loan").onsubmit = function() {
+                var loan_name = prompt("Please enter a name for this loan.", "<Type loan name here>");
+
+                if (loan_name == null || loan_name.trim() == "" || loan_name == "<Type loan name here>") {
+                    alert("You must enter a valid loan name.");
+                    return false;
+                } else {
+                    document.getElementById("loan_name").value = `${loan_name}`;
+                }
             };
         });
 
@@ -43,22 +78,22 @@
 
 {% block body %}
     <!-- Form to compute loan payment amounts -->
-    <form>
+    <form id="form_compute_loan">
         <h3>Calculate a New Loan</h3>
         <ul>
             <li>
-                Loan Amount ($): <input type="number" id="amount" placeholder="Loan Amount ($)">
+                Loan Amount ($): <input type="number" id="amount" placeholder="Loan Amount ($)" min="0.01" step="0.01">
             </li>
             <li>
-                Annual Interest Rate (%): <input type="number" id="int_rate" placeholder="Annual Interest Rate (%)">
+                Annual Interest Rate (%): <input type="number" id="int_rate" placeholder="Annual Interest Rate (%)" min="0.01" step="0.01">
             </li>
             <li>
-                Loan Period (Yrs.): <input type="number" id="period" placeholder="Loan Period (Yrs.)">
+                Loan Period (Yrs.): <input type="number" id="period" placeholder="Loan Period (Yrs.)" min="1" step="1">
             </li>
             <li>
                 <label for="start">First Payment Was: </label>
                 <select id="start">
-                    <option value="none">Select an option...</option>
+                    <option value="None">Select an option...</option>
                     <option value="immediate">Immediate</option>
                     <option value="deferred">Deferred</option>
                 </select>
@@ -66,7 +101,7 @@
             <li>
                 <label for="frequency">Payment Frequency: </label>
                 <select id="frequency">
-                    <option value="0">Select an option...</option>
+                    <option value="None">Select an option...</option>
                     <option value="12">Monthly</option>
                     <option value="6">Every Two Months</option>
                     <option value="4">Every Three Months</option>
@@ -78,5 +113,16 @@
         <input type="submit" value="Calculate Payment">
     </form>
     <h4 id="payment_display">Monthly Payment: $0.00</h4>
+
+    <!-- Form to add this^^ loan to monthly expenses list -->
+    <form id="form_add_loan" action="{% url 'add_expense' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="user_ID" value="{{ request.user.id }}">
+        <input type="hidden" name="name" id="loan_name" value="(INSERT LOAN NAME HERE)">
+        <input type="hidden" name="category" value="Loan">
+        <input type="hidden" name="amount" id="loan_amount" value="0.00">
+        <input type="submit" value="Add to Monthly Expenses">
+    </form>
+    <br>
     <a href="{% url 'loan_refinance' %}">Refinance a Loan Instead?</a>
 {% endblock %}

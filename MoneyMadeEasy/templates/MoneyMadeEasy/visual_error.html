@@ -1,0 +1,18 @@
+{% extends "MoneyMadeEasy/layout.html" %}
+
+{% block body %}
+    <h3>Visualize Your Expenses</h3>
+    <p>To display a visual representation of your expenses, you need to:</p>
+    <ol>
+        <li>
+            <a href="{% url 'edit_profile' %}">Indicate Your Monthly Disposable Income</a>
+        </li>
+        <li>
+            <a href="{% url 'edit_profile' %}">Indicate Your Monthly Goal Savings</a>
+        </li>
+        <li>
+            <a href="{% url 'add_expense' %}">Have at Least One Expense</a>
+        </li>
+    </ol>
+    <p>Once you do these three things, we will be able to display a visual representation of your expenses.</p>
+{% endblock %}
