@@ -1,114 +1,27 @@
 {% extends "MoneyMadeEasy/layout.html" %}
+{% load static %}
 
 <!-- Common styling over entire page -->
 {% block style %}
-<style>
-    .remainder {
-        width: 100px;
-        text-align: center;
-        background-color:lightpink;
-    }
-
-    .savings {
-        width: 100px;
-        text-align: center;
-        background-color:lightgreen;
-    }
-
-    .expense {
-        width: 100px;
-        text-align: center;
-        background-color:lightblue;
-    }
-
-    .boundary_edge {
-        margin: 0px;
-        padding: 0px;
-        width: 250px;
-        border: 2px solid black;
-    }
-
-    .boundary_std {
-        margin: 0px;
-        padding: 0px;
-        width: 96px;
-        margin-right: auto;
-        border: 2px solid black;
-    }
-
-    p {
-        margin: 0px;
-    }
-</style>
+    <link rel="stylesheet" href="{% static 'MoneyMadeEasy/visual.css' %}">
 {% endblock %}
 
 <!-- Rectangle height = proportional to monetary amount -->
 {% block script %}
-<script>
-    // Constants to setup visual representation
-    height = 75;
-    offset = 35;
-    cutoff = 40;
-    min_padding = 2;
-
-    // Parse incoming context data about current user
-    amounts = {{ amounts }};
-    avg = {{ avg }};
-    remainder = {{ remainder }};
-    savings = {{ savings }};
-
-    document.addEventListener('DOMContentLoaded', function() {
-    
-        // Display block for amount of remaining income (or amount over budget), assuming it is nonzero
-        if (remainder != 0) {
-            height_rmdr = Math.round(height * (remainder / avg));
-            padding_rmdr = Math.max(min_padding, Math.round((height_rmdr - offset) / 2));
-
-            height_str_rmdr = `${height_rmdr}` + "px";
-            padding_str_rmdr = `${padding_rmdr}` + "px";
-
-            if (height_rmdr < cutoff) {
-                height_ratio = Math.round(100 * (height_rmdr / cutoff));
-                document.getElementById("remainder_txt").style.fontSize = `${height_ratio}` + "%";
-            }
-
-            document.getElementById("remainder").style.height = height_str_rmdr;
-            document.getElementById("remainder_txt").style.paddingTop = padding_str_rmdr;
-        }
-
-        // Block for goal savings
-        height_svng = Math.round(height * (savings / avg));
-        padding_svng = Math.max(min_padding, Math.round((height_svng - offset) / 2));
-
-        height_str_svng= `${height_svng}` + "px";
-        padding_str_svng = `${padding_svng}` + "px";
-
-        if (height_svng < cutoff) {
-            height_ratio = Math.round(100 * (height_svng / cutoff));
-            document.getElementById("savings_txt").style.fontSize = `${height_ratio}` + "%";
-        }
-
-        document.getElementById("savings").style.height = height_str_svng;
-        document.getElementById("savings_txt").style.paddingTop = padding_str_svng;
-
-        // Blocks for each monthly expense
-        for(var i = 0, length = amounts.length; i < length; i++) {
-            scaled_height = Math.round(height * (amounts[i] / avg));
-            padding = Math.max(min_padding, Math.round((scaled_height - offset) / 2));
-
-            height_str = `${scaled_height}` + "px";
-            padding_str = `${padding}` + "px";
-
-            if (scaled_height < cutoff) {
-                height_ratio = Math.round(100 * (scaled_height / cutoff));
-                document.getElementById(`text${i}`).style.fontSize = `${height_ratio}` + "%";
-            }
-
-            document.getElementById(`expense${i}`).style.height = height_str;
-            document.getElementById(`text${i}`).style.paddingTop = padding_str;
-        }; 
-    });
-</script>
+    <script>
+        // Constants to setup visual representation (i.e. each rectangle height = proportional to $$ amount)
+        height = 75;
+        offset = 35;
+        cutoff = 40;
+        min_padding = 2;
+        
+        // Parse incoming context data about current user
+        amounts = {{ amounts }};
+        avg = {{ avg }};
+        remainder = {{ remainder }};
+        savings = {{ savings }};
+    </script>
+    <script src="{% static 'MoneyMadeEasy/visual.js' %}"></script>
 {% endblock %}
 
 {% block body %}
