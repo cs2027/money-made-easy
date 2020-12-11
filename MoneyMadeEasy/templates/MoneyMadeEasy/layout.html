@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html> 
 <html lang="en">
     <head>
@@ -5,27 +7,38 @@
             MoneyMadeEasy
         </title>
         {% block style %}
+            <!-- UIkit CSS -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/css/uikit.min.css"/>
+
+            <!-- Common CSS across entire website -->
+            <link rel="stylesheet" href="{% static 'MoneyMadeEasy/styles.css' %}">
         {% endblock %}
 
         {% block script %}
+            <!-- UIkit JS -->
+            <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
         {% endblock %}
     </head>
     <body>
-        <h2>Money Made Easy</h2>
+        <h1 style="margin-top: 1%;">MoneyMadeEasy</h1>
         {% if request.user.is_authenticated %}
-        <h3>
-            Logged in As: <a href="{% url 'index' %}">{{ request.user.username }}</a>
-        </h3>
-        <h3>
-            <a href="{% url 'logout' %}">Log Out</a>
-        </h3>
-        <hr>
-        <div>
-            <a href="{% url 'profile' %}">Profile</a>
-            <a href="{% url 'expenses' %}">Monthly Expenses</a>
-            <a href="{% url 'loan_calc' %}">Mortgage/Loan Calculator</a>
-            <a href="{% url 'visual' %}">Visualize Your Expenses</a>
-        </div>
+            <div style="margin-top: 2%; margin-left: 3%;" class="uk-position-top-left">
+                <h3><a href="{% url 'index' %}">{{ request.user.username }}</a></h3>
+            </div>
+            <div style="margin-top: 2%; margin-right: 3%;" class="uk-position-top-right">
+                <button class="uk-button uk-button-default" type="button">Menu</button>
+                <div uk-dropdown>
+                    <ul class="uk-nav uk-dropdown-nav">
+                        <li><a href="{% url 'index' %}">Profile</a></li>
+                        <li><a href="{% url 'expenses' %}">Monthly Expenses</a></li>
+                        <li><a href="{% url 'loan_calc' %}">Mortgage/Loan Calculator</a></li>
+                        <li><a href="{% url 'visual' %}">Visualize Your Expenses</a></li>
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr style="border: 2px solid black; margin-left: -3%; margin-right: -3%;">
         {% endif %}
         {% block body %}
         {% endblock %}

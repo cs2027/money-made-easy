@@ -1,48 +1,62 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 {% load static %}
 
-<!-- JS section to (1) compute loan payments and (2) add loans to expenses list -->
 {% block script %}
+    <!-- JS file to (1) compute loan payments and (2) add loans to expenses list -->
     <script src="{% static 'MoneyMadeEasy/loan_new.js' %}"></script>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
 {% endblock %}
 
 {% block body %}
     <!-- Form to compute loan payment amounts -->
     <form id="form_compute_loan">
         <h3>Calculate a New Loan</h3>
-        <ul>
-            <li>
-                Loan Amount ($): <input type="number" id="amount" placeholder="Loan Amount ($)" min="0.01" step="0.01">
-            </li>
-            <li>
-                Annual Interest Rate (%): <input type="number" id="int_rate" placeholder="Annual Interest Rate (%)" min="0.01" step="0.01">
-            </li>
-            <li>
-                Loan Period (Yrs.): <input type="number" id="period" placeholder="Loan Period (Yrs.)" min="1" step="1">
-            </li>
-            <li>
-                <label for="start">First Payment Was: </label>
-                <select id="start">
-                    <option value="None">Select an option...</option>
-                    <option value="immediate">Immediate</option>
-                    <option value="deferred">Deferred</option>
-                </select>
-            </li>
-            <li>
-                <label for="frequency">Payment Frequency: </label>
-                <select id="frequency">
-                    <option value="None">Select an option...</option>
-                    <option value="12">Monthly</option>
-                    <option value="6">Every Two Months</option>
-                    <option value="4">Every Three Months</option>
-                    <option value="2">Every Six Months</option>
-                    <option value="1">Annually</option>
-                </select>
-            </li>
-        </ul>
-        <input type="submit" value="Calculate Payment">
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Loan Amount ($)</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="number" id="amount" placeholder="Loan Amount ($)" min="0.01" step="0.01">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Annual Interest Rate (%)</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="number" id="int_rate" placeholder="Loan Amount ($)" min="0.01" step="0.01">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Loan Period (Yrs.)</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="number" id="period" placeholder="Loan Period (Yrs.)" min="1" step="1">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">First Payment Was:</label>
+            <select class="uk-select" id="start">
+                <option value="None">Select an option...</option>
+                <option value="immediate">Immediate</option>
+                <option value="deferred">Deferred</option>
+            </select>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Payment Frequency</label>
+            <select class="uk-select" id="frequency">
+                <option value="None">Select an option...</option>
+                <option value="12">Monthly</option>
+                <option value="6">Every Two Months</option>
+                <option value="4">Every Three Months</option>
+                <option value="2">Every Six Months</option>
+                <option value="1">Annually</option>
+            </select>
+        </div>
+        <div class="uk-margin">
+            <input class="uk-input uk-form-width-medium" type="submit" value="Calculate Payment">
+        </div>
     </form>
-    <h4 id="payment_display">Monthly Payment: $0.00</h4>
+    <hr style="border: 2px solid black; margin-left: -3%; margin-right: -3%;">
+    <h4 style="text-align: start;" id="payment_display">Monthly Payment: $0.00</h4>
 
     <!-- Form to add this^^ loan to monthly expenses list -->
     <form id="form_add_loan" action="{% url 'add_expense' %}" method="POST">
@@ -51,8 +65,9 @@
         <input type="hidden" name="name" id="loan_name" value="(INSERT LOAN NAME HERE)">
         <input type="hidden" name="category" value="Loan">
         <input type="hidden" name="amount" id="loan_amount" value="0.00">
-        <input type="submit" value="Add to Monthly Expenses">
+        <div class="uk-margin">
+            <input class="uk-input uk-form-width-medium" type="submit" value="Add to Monthly Expenses">
+        </div>
     </form>
-    <br>
     <a href="{% url 'loan_refinance' %}">Refinance a Loan Instead?</a>
 {% endblock %}

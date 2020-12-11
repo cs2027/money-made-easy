@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from .models import User, Expense
 
 
-# Initial landing page for users
+# Initial landing page for users (displays basic profile info)
 def index(request):
     # Display landing page for authenticated users
     if not request.user.is_authenticated:
@@ -85,11 +85,6 @@ def logout_page(request):
     return render(request, "MoneyMadeEasy/login.html", {
         "message": "You have now logged out."
     })
-
-
-# Display profile info associated with current user
-def profile(request):
-    return render(request, "MoneyMadeEasy/profile.html")
 
 
 # View all monthly expenses
@@ -171,8 +166,8 @@ def edit_profile(request):
         user.goal_savings = new_GS
         user.save()
 
-        # Return to profile page
-        return HttpResponseRedirect(reverse("profile"))
+        # Return to main landing page
+        return HttpResponseRedirect(reverse("index"))
 
     # For a 'GET' request, display the "edit profile" page
     return render(request, "MoneyMadeEasy/edit_profile.html")

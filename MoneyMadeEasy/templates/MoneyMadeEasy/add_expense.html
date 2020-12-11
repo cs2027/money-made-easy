@@ -11,24 +11,29 @@
     <form action="{% url 'add_expense' %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="user_ID" value="{{ request.user.id }}">
-        <ul>
-            <li>
-                Name: <input type="text" name="name" placeholder="Name">
-            </li>
-            <li>
-                <label for="category">Category: </label>
-                <select name="category">
-                    <option value="None">Select a category...</option>
-                    <option value="Loan">Loan</option>
-                    <option value="Fixed/Recurring">Fixed/Recurring</option>
-                </select>
-            </li>
-            <li>
-                Amount ($): <input type="number" name="amount" placeholder="Amount ($)" min="0.01" step="0.01">
-            </li>
-        </ul>
-        <input type="submit" value="Add Expense">
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Name</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="text" name="name" placeholder="Name">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Category</label>
+            <select class="uk-select" name="category">
+                <option value="None">Select a category...</option>
+                <option value="Loan">Loan</option>
+                <option value="Fixed/Recurring">Fixed/Recurring</option>
+            </select>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Amount ($)</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="number" name="amount" placeholder="Amount" min="0.01" step="0.01">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <input class="uk-input uk-form-width-small" type="submit" value="Add Expense">
+        </div>
     </form>
-    <br>
     <a href="{% url 'expenses' %}">View Current Monthly Expenses</a>
 {% endblock %}

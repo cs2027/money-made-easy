@@ -3,6 +3,13 @@
 
 <!-- Common styling over entire page -->
 {% block style %}
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/css/uikit.min.css" />
+
+    <!-- Common CSS across entire website -->
+    <link rel="stylesheet" href="{% static 'MoneyMadeEasy/styles.css' %}">
+
+    <!-- Custom CSS for <visual.html> page -->
     <link rel="stylesheet" href="{% static 'MoneyMadeEasy/visual.css' %}">
 {% endblock %}
 
@@ -11,8 +18,8 @@
     <script>
         // Constants to setup visual representation (i.e. each rectangle height = proportional to $$ amount)
         height = 75;
-        offset = 35;
-        cutoff = 40;
+        offset = 50;
+        cutoff = 50;
         min_padding = 2;
         
         // Parse incoming context data about current user
@@ -22,6 +29,10 @@
         savings = {{ savings }};
     </script>
     <script src="{% static 'MoneyMadeEasy/visual.js' %}"></script>
+
+     <!-- UIkit JS -->
+     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -81,4 +92,7 @@
     {% empty %}
         No expenses so far!
     {% endfor %}
+
+    <br>
+    <br>
 {% endblock %}

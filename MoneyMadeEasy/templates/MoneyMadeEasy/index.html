@@ -1,7 +1,22 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 
 {% block body %}
-    <h4>Welcome, {{ request.user.username }}!</h4>
-
-    <a href="{% url 'logout' %}">Log Out</a>
+    <h3>Monthly Summary</h3>
+    <table class="uk-table uk-table-striped">
+        <thead>
+            <tr>
+                <th><u>Disposable Income ($)</u></th>
+                <th><u>Savings Goal ($)</u></th>
+                <th><u>Expenses ($)</u></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>${{ request.user.monthly_DI }}</td>
+                <td>${{ request.user.goal_savings }}</td>
+                <td>${{ request.user.total_expenses }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="{% url 'edit_profile' %}">Edit Profile</a>
 {% endblock %}

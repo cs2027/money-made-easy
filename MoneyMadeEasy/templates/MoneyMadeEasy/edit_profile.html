@@ -2,23 +2,27 @@
 
 {% block body %}
     <!-- Form to update profile info (monthly disposable income, goal savings) -->
-    <form action="{% url 'edit_profile' %}" method="POST">
+    <form class="uk-form-stacked" action="{% url 'edit_profile' %}" method="POST">
         {% csrf_token %}
-        <h3>Monthly Summary</h3>
-        <ul>
-            <input type="hidden" name="user_ID" value="{{ request.user.id }}">
-            <li>
-                Disposable Income ($): <input type="number" name="new_DI" placeholder="Disposable Income ($)" value="{{ request.user.monthly_DI }}" min="0.00" step="0.01">
-            </li>
-            <li>
-                Goal Savings ($): <input type="number" name="new_GS" placeholder="Goal Savings ($)" value="{{ request.user.goal_savings }}" min="0.00" step="0.01">
-            </li>
-            <li>
-                <a href="{% url 'expenses' %}">Edit Your Monthly Expenses</a>
-            </li>
-        </ul>
-        <input type="submit" value="Update Profile">
+        <h3>Edit Profile</h3>
+        <input type="hidden" name="user_ID" value="{{ request.user.id }}">
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Disposable Income ($)</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="number" name="new_DI" placeholder="Disposable Income ($)" value="{{ request.user.monthly_DI }}" min="0.00" step="0.01">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Goal Savings ($)</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="number" name="new_GS" placeholder="Goal Savings ($)" value="{{ request.user.goal_savings }}" min="0.00" step="0.01">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <input class="uk-input uk-form-width-small" type="submit" value="Update Profile">
+        </div>
     </form>
+    <a href="{% url 'expenses' %}">Edit Your Monthly Expenses</a>
     <br>
-    <a href="{% url 'profile' %}">Return to Profile</a>
+    <a href="{% url 'index' %}">Return to Profile</a>
 {% endblock %}

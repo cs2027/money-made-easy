@@ -8,12 +8,23 @@
     {% endif %}
 
     <!-- Login form -->
-    <form action="{% url 'login' %}" method="POST">
+    <form class="uk-form-stacked" action="{% url 'login' %}" method="POST">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" value="Login">
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Username</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="text" name="username" placeholder="Username">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-stacked-text">Password</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" type="password" name="password" placeholder="Password">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <input class="uk-input uk-form-width-small" type="submit" value="Login">
+        </div>
     </form>
-    <br>
     <a href="{% url 'register' %}">New User?</a>
 {% endblock %}

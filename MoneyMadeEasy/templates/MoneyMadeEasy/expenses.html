@@ -9,20 +9,39 @@
             }
         }
     </script>
+
+     <!-- UIkit JS -->
+     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
 {% endblock %}
 
 <!-- Form to edit/delete expenses -->
 {% block body %}
     <h3>Monthly Expenses</h3>
-    <ul>
-        {% for expense in expenses %}
-            <a href="{% url 'edit_expense' expense.id %}">
-                <li>Name: {{ expense.name }}, Category: {{ expense.category }}, Amount ($): ${{ expense.amount }}</li>
-            </a>
-            <input style="margin-top: 5px; margin-bottom: 5px;" type="submit" onclick="remove_expense('{{ expense.id }}')" value="Remove this Expense">
-        {% empty %}
-            <li>No expenses so far!</li>
-        {% endfor %}
-    </ul>
+
+    <table class="uk-table uk-table-striped">
+        <thead>
+            <tr>
+                <th><u>Name</u></th>
+                <th><u>Type</u></th>
+                <th><u>Amount ($)</u></th>
+                <th><u>Edit</u></th>
+                <th><u>Delete</u></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.name }}</td>
+                <td>{{ expense.category }}</td>
+                <td>${{ expense.amount }}</td>
+                <td><a href="{% url 'edit_expense' expense.id %}">Edit</a></td>
+                <td onclick="remove_expense('{{ expense.id }}')">Delete</td>
+            </tr>
+            {% empty %}
+                <li>No expenses so far!</li>
+            {% endfor %}
+        </tbody>
+    </table>
     <a href="{% url 'add_expense' %}">Add a New Expense</a>
 {% endblock %}
