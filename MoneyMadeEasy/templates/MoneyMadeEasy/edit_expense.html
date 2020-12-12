@@ -7,7 +7,7 @@
     {% endif %}
 
     <!-- Form to edit a given expense -->
-    <h3>Edit Expense: {{ expense.name }} (${{ expense.amount }})</h3>
+    <h2>Edit Expense: {{ expense.name }} (${{ expense.amount }})</h2>
     <form action="{% url 'edit_expense' expense.id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="user_ID" value="{{ request.user.id }}">
@@ -19,10 +19,20 @@
         </div>
         <div class="uk-margin">
             <label class="uk-form-label" for="form-stacked-text">Category</label>
-            <select class="uk-select" name="category">
-                <option value="None">Select a category...</option>
-                <option value="Loan">Loan</option>
-                <option value="Fixed/Recurring">Fixed/Recurring</option>
+            <select id="expense_category" class="uk-select" name="category">
+                {% if expense.category == "Loan" %}
+                    <option value="None">Select a category...</option>
+                    <option value="Loan" selected>Loan</option>
+                    <option value="Fixed/Recurring">Fixed/Recurring</option>
+                {% elif expense.category == "Fixed/Recurring" %}
+                    <option value="None">Select a category...</option>
+                    <option value="Loan">Loan</option>
+                    <option value="Fixed/Recurring" selected>Fixed/Recurring</option>
+                {% else %}
+                    <option value="None" selected>Select a category...</option>
+                    <option value="Loan">Loan</option>
+                    <option value="Fixed/Recurring">Fixed/Recurring</option>
+                {% endif %}
             </select>
         </div>
         <div class="uk-margin">

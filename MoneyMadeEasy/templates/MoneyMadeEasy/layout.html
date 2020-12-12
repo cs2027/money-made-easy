@@ -18,6 +18,9 @@
             <!-- UIkit JS -->
             <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
+
+            <!-- Common JS across entire website -->
+            <script src="{% static 'MoneyMadeEasy/scripts.js' %}"></script>
         {% endblock %}
     </head>
     <body>
@@ -26,7 +29,7 @@
             <div style="margin-top: 2%; margin-left: 3%;" class="uk-position-top-left">
                 <h3><a href="{% url 'index' %}">{{ request.user.username }}</a></h3>
             </div>
-            <div style="margin-top: 2%; margin-right: 3%;" class="uk-position-top-right">
+            <div id="main_menu" style="margin-top: 2%; margin-right: 3%;" class="uk-position-top-right">
                 <button class="uk-button uk-button-default" type="button">Menu</button>
                 <div uk-dropdown>
                     <ul class="uk-nav uk-dropdown-nav">

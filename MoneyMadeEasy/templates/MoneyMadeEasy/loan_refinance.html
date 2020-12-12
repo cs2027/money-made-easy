@@ -5,15 +5,18 @@
     <!-- JS file to (1) compute loan payments and (2) add loans to expenses list -->
     <script src="{% static 'MoneyMadeEasy/loan_refinance.js' %}"></script>
 
-     <!-- UIkit JS -->
-     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
+    <!-- Common JS across entire website -->
+    <script src="{% static 'MoneyMadeEasy/scripts.js' %}"></script>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
 {% endblock %}
 
 <!-- Form to refinance an existing loan w/ a new interest rate -->
 {% block body %}
     <form id="form_compute_loan">
-        <h3>Refinance an Existing Loan</h3>
+        <h2>Refinance an Existing Loan</h2>
         <div class="uk-margin">
             <label class="uk-form-label" for="form-stacked-text">Original Loan Amount ($)</label>
             <div class="uk-form-controls">
@@ -107,6 +110,7 @@
         </div>
     </form>
     <hr style="border: 2px solid black; margin-left: -3%; margin-right: -3%;">
+    <h4 style="text-align: start; margin-bottom: -1%" id="payment_display_old">Old Monthly Payment: $0.00</h4>
     <h4 style="text-align: start;" id="payment_display">New Monthly Payment: $0.00</h4>
 
      <!-- Form to add this^^ loan to monthly expenses list -->

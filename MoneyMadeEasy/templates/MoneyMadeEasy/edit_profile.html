@@ -4,7 +4,7 @@
     <!-- Form to update profile info (monthly disposable income, goal savings) -->
     <form class="uk-form-stacked" action="{% url 'edit_profile' %}" method="POST">
         {% csrf_token %}
-        <h3>Edit Profile</h3>
+        <h2>Edit Profile</h2>
         <input type="hidden" name="user_ID" value="{{ request.user.id }}">
         <div class="uk-margin">
             <label class="uk-form-label" for="form-stacked-text">Disposable Income ($)</label>

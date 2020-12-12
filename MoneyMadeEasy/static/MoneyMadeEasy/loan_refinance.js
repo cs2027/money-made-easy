@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('form_compute_loan').onsubmit = function() {
 
         // Obtain and parse form data
+        var payment_display_old = document.getElementById("payment_display_old"); 
         var payment_display = document.getElementById("payment_display"); 
         var amount = document.getElementById("amount").value;
         var period = document.getElementById("period").value;
@@ -49,10 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var payment_old = compute_loan_old(amount, IR_old, period, start, frequency);
         var loan_outstanding = compute_loan_outstanding(amount, payment_old, IR_old, frequency, start, num_payments, last_payment);
         var payment_new = compute_loan_new(loan_outstanding, IR_new, frequency, next_payment, period * frequency - num_payments)
+        payment_display_old.innerHTML = `Old Monthly Payment: $${payment_old}`;  
         payment_display.innerHTML = `New Monthly Payment: $${payment_new}`;  
 
         // Update hidden form field (if user wants to add loan to expenses list)
-        document.getElementById("loan_amount").value = `${payment}`;
+        document.getElementById("loan_amount").value = `${payment_new}`;
         return false;
     };
 
