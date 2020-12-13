@@ -9,11 +9,11 @@ import json
 
 # Initial landing page for users (displays basic profile info)
 def index(request):
-    # Display landing page for authenticated users
+    # Direct unauthenticated users to the login page
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("login"))
 
-    # Else, direct the user to the login page
+    # Display landing page for authenticated users
     return render(request, "MoneyMadeEasy/index.html")
 
 
@@ -98,21 +98,31 @@ def expenses(request):
 
 # Links to loan-related calculations
 def loan_calc(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
     return render(request, "MoneyMadeEasy/loan_calc.html")
 
 
 # Calculate payments on a new loan
 def loan_new(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
     return render(request, "MoneyMadeEasy/loan_new.html")
 
 
 # Calculate adjusted payments after refinancing an existing loan
 def loan_refinance(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
     return render(request, "MoneyMadeEasy/loan_refinance.html")
 
 
 # Visual representation of monthly expenses
 def visual(request):
+    # Direct unauthenticated users to the login page
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+
     # Determine all relevant user data (monthly expenses, disposable income, etc.)
     expenses = request.user.expenses.all()
     amounts_arr = []
@@ -181,9 +191,14 @@ def edit_profile(request):
 
         # Return to main landing page
         return HttpResponseRedirect(reverse("index"))
+    
+    else:
+        # Direct unauthenticated users to the login page
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("login"))
 
-    # For a 'GET' request, display the "edit profile" page
-    return render(request, "MoneyMadeEasy/edit_profile.html")
+        # Else, for a standard 'GET' request, display the "edit profile" page
+        return render(request, "MoneyMadeEasy/edit_profile.html")
 
 
 # Add new monthly expenses (both loans & fixed costs)
@@ -217,8 +232,13 @@ def add_expense(request):
         # Display all of the user's expenses (including the new one)
         return HttpResponseRedirect(reverse("expenses"))
 
-    # For a 'GET' request, display the form to add a new expense
-    return render(request, "MoneyMadeEasy/add_expense.html")
+    else:
+        # Direct unauthenticated users to the login page
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("login"))
+
+        # Else, for a standard 'GET' request, display the form to add a new expense
+        return render(request, "MoneyMadeEasy/add_expense.html")
 
 
 # Edit an existing expense
@@ -257,10 +277,15 @@ def edit_expense(request, expense_ID):
         update_expenses(user)
         return HttpResponseRedirect(reverse("expenses"))
 
-    # For a 'GET' request, display the form to edit an existing expense
-    return render(request, "MoneyMadeEasy/edit_expense.html", {
-        "expense": expense
-    })
+    else:
+        # Direct unauthenticated users to the login page
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse("login"))
+
+        # Else, for a standard 'GET' request, display the form to edit an existing expense
+        return render(request, "MoneyMadeEasy/edit_expense.html", {
+            "expense": expense
+        })
 
 
 # Remove a given `expense` object from the database

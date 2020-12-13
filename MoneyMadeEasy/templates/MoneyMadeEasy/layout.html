@@ -24,7 +24,11 @@
         {% endblock %}
     </head>
     <body>
-        <h1 style="margin-top: 1%;">MoneyMadeEasy</h1>
+        <h1 style="margin-top: 1%;">
+            MoneyMadeEasy
+            <img style="width: 50px; height: 50px" src="{% static 'MoneyMadeEasy/MME_icon.png' %}" alt="MME Icon">
+        </h1>
+        
         {% if request.user.is_authenticated %}
             <div style="margin-top: 2%; margin-left: 3%;" class="uk-position-top-left">
                 <h3><a href="{% url 'index' %}">{{ request.user.username }}</a></h3>
