@@ -1,98 +1,99 @@
 {% extends "MoneyMadeEasy/layout.html" %}
 {% load static %}
 
-<!-- Common styling over entire page -->
 {% block style %}
     <!-- UIkit CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/css/uikit.min.css" />
 
     <!-- Common CSS across entire website -->
     <link rel="stylesheet" href="{% static 'MoneyMadeEasy/styles.css' %}">
-
-    <!-- Custom CSS for <visual.html> page -->
-    <link rel="stylesheet" href="{% static 'MoneyMadeEasy/visual.css' %}">
 {% endblock %}
 
-<!-- Rectangle height = proportional to monetary amount -->
 {% block script %}
-    <script>
-        // Constants to setup visual representation (i.e. each rectangle height = proportional to $$ amount)
-        height = 75;
-        offset = 50;
-        cutoff = 50;
-        min_padding = 2;
-        
-        // Parse incoming context data about current user
-        amounts = {{ amounts }};
-        avg = {{ avg }};
-        remainder = {{ remainder }};
-        savings = {{ savings }};
-    </script>
-    <script src="{% static 'MoneyMadeEasy/visual.js' %}"></script>
+    <!-- Chart.js usage -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
-     <!-- UIkit JS -->
-     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
+    <!-- Common JS across entire website -->
+    <script src="{% static 'MoneyMadeEasy/scripts.js' %}"></script>
+
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.15/dist/js/uikit-icons.min.js"></script>
 {% endblock %}
 
 {% block body %}
     <h2>Visualize Your Expenses</h2>
 
-    <hr class="boundary_edge">
-    {% if over_budget %}
-        <p style="color:red">You are currently over budget by ${{ remainder }}. Here are some suggestions:</p>
-        <ul style="margin:5px">
+    <!-- Display a message if applicable -->
+    {% if not over_budget and remainder == 0 %}
+        <h4>Note: You have exactly $0.00 of remaining money (your expenses and savings exactly balance your disposable income).</h4>
+    {% elif over_budget %}
+        <h4>Note: You are currently over budget by ${{ remainder }}. Here are some suggestions:</h4>
+        <ul>
             <li>Increase your monthly disposable income by ${{ remainder }}</li>
-            <li>Decrease your goal savings by ${{ remainder }}</li>
-            <li>Reduce your monthly expenses by ${{ remainder }}</li>
-            <li>... or some combination of these three actions</li>
+            <li>Cut your monthly expenses by ${{ remainder }}</li>
+            <li>Decrease your monthly savings goal by ${{ remainder }}</li>
+            <li>... Or some combination of these three actions</li>
         </ul>
-    {% else %}
-        <p>Total Disposable Income: ${{ total_DI }}</p>
-        {% if remainder == 0 %}
-            <br>
-            <p>NOTE: You currently have exactly $0.00 leftover, i.e. your disposable income exactly balances your savings and expenses.</p>
-        {% endif %}
     {% endif %}
 
-    {% if remainder != 0 %}
-        <hr class="boundary_edge">
-    {% endif %}
-
-    {% if over_budget %}
-        <div class="remainder" id="remainder">
-            <p id="remainder_txt">Over Budget (-${{ remainder }})</p>
-        </div>
-    {% else %}
-        {% if remainder != 0 %}
-            <div class="remainder" id="remainder">
-                <p id="remainder_txt">Remaining $$ (${{ remainder }})</p>
-            </div>
-        {% endif %}
-    {% endif %}
-
-    {% if remainder == 0 %}
-        <hr class="boundary_edge">
-    {% else %}
-        <hr class="boundary_std">
-    {% endif %}
-    
-    <div class="savings" id="savings">
-        <p id="savings_txt">Goal Savings (${{ savings }})</p>
-    </div>
-    <hr class="boundary_std">
-
-    {% for expense in expenses %}
-        <div class="expense" id="expense{{ forloop.counter0 }}">
-            <p id="text{{ forloop.counter0 }}">{{ expense.name }} (${{ expense.amount }})</p>
-        </div>
-        {% if forloop.counter != expenses|length %}
-            <hr class="boundary_std">
-        {% endif %}
-    {% empty %}
-        No expenses so far!
-    {% endfor %}
-
+    <canvas id="myChart"></canvas>
     <br>
     <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- JS section to display `donut` chart of expenses -->
+    <script>
+        // Obtain amounts and names of all expenses
+        var amounts = {{ amounts }};
+        var names = {{ names|safe }};
+
+        // List of all possible colors
+        var red = "rgba(255, 0, 0, 1.0)";
+        var yellow = "rgba(255, 255, 0, 1.0)";
+        var orange = "rgba(255, 128, 0, 1.0)";
+        var green = "rgba(0, 255, 0, 1.0)";
+        var blue = "rgba(0, 0, 255, 1.0)";
+        var purple = "rgba(255, 0, 255, 1.0)"
+        var silver = "rgba(190, 190, 190, 1.0)";
+
+        var full_arr = [red, yellow, orange, green, blue, purple, silver];
+        var light_arr = new Array();
+
+        for (var i = 0, len = full_arr.length; i < len; i++) {
+            color_light = full_arr[i].replace("1.0", "0.6");
+            light_arr.push(color_light);
+        }
+
+        // Initialize colors for the current user's expense categories
+        colors_full = new Array();
+        colors_light = new Array();
+
+        for (var i = 0, len = amounts.length, num = full_arr.length; i < len; i++) {
+            colors_full.push(full_arr[i % num]);
+            colors_light.push(light_arr[i % num]);
+        }
+
+
+        // Create chart & display in view
+        document.addEventListener('DOMContentLoaded', function() {
+            var data = {
+                datasets: [{
+                    data: amounts,
+                    backgroundColor: colors_light,
+                    hoverBackgroundColor: colors_full
+                }],
+
+                labels: names
+            };
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myDoughnutChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+            });
+        });
+    </script>
 {% endblock %}

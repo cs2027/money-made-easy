@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.db import IntegrityError
 from .models import User, Expense
+import json
 
 
 # Initial landing page for users (displays basic profile info)
@@ -112,44 +113,56 @@ def loan_refinance(request):
 
 # Visual representation of monthly expenses
 def visual(request):
-    # Parse current user data (income, savings goal, expenses)
+    # Determine all relevant user data (monthly expenses, disposable income, etc.)
     expenses = request.user.expenses.all()
-    amounts = []
+    amounts_arr = []
+    names_arr = []
 
     for expense in expenses:
-        amounts.append(float(expense.amount))
+        amounts_arr.append(float(expense.amount))
+        names_arr.append(str(expense.name))
 
     total_DI = request.user.monthly_DI
     savings = request.user.goal_savings
-
-    # If data is unsufficient (no income/savings info, no expenses), render an alternate template
-    if total_DI == 0 or savings == 0 or len(amounts) == 0:
-        return render(request, "MoneyMadeEasy/visual_error.html")
-
-    avg = sum(amounts) / len(amounts) 
     remainder = total_DI - savings - request.user.total_expenses 
 
-    # Else, dispatch based on whether or not the user is over budget
+    # If data is unsufficient (no income/savings info, no expenses), render an alternate template
+    if total_DI == 0 or savings == 0 or len(expenses) == 0:
+        return render(request, "MoneyMadeEasy/visual_error.html")
+
+    # Dispatch based on whether the user is over or under budget
     if remainder >= 0:
+        amounts_arr.append(float(savings))
+        amounts_arr.append(float(remainder))
+
+        names_arr.append("Goal Savings")
+        names_arr.append("Remainder")
+
+        amounts = json.dumps(amounts_arr)
+        names = json.dumps(names_arr)
+
         return render(request, "MoneyMadeEasy/visual.html", {
-            "expenses": expenses,
             "amounts": amounts,
-            "avg": avg,
-            "total_DI": total_DI,
+            "names": names,
             "remainder": remainder,
-            "savings": savings, 
             "over_budget": False
         })
- 
-    return render(request, "MoneyMadeEasy/visual.html", {
-        "expenses": expenses,
-        "amounts": amounts,
-        "avg": avg,
-        "total_DI": total_DI,
-        "remainder": abs(remainder),
-        "savings": savings,
-        "over_budget": True
-    })
+    else:
+        amounts_arr.append(float(savings))
+        amounts_arr.append(abs(float(remainder)))
+
+        names_arr.append("Goal Savings")
+        names_arr.append("Over Budget")
+
+        amounts = json.dumps(amounts_arr)
+        names = json.dumps(names_arr)
+
+        return render(request, "MoneyMadeEasy/visual.html", {
+            "amounts": amounts,
+            "names": names,
+            "remainder": abs(remainder),
+            "over_budget": True
+        })
 
 
 # Edit current user's profile info

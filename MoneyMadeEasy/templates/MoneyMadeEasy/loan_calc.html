@@ -2,10 +2,23 @@
 
 {% block body %}
     <h2>Mortgage/Loan Calculators</h2>
-    <li>
-        <a href="{% url 'loan_new' %}">Calculate a New Loan</a>
-    </li>
-    <li>
-        <a href="{% url 'loan_refinance' %}">Refinance an Existing Loan</a>
-    </li>
+
+    <div class="uk-flex uk-flex-center">
+        <div style="width: 40%; text-align: center;" class="loan_calc uk-card uk-card-default uk-card-body">
+            <a href="{% url 'loan_new' %}">Calculate a New Loan</a>
+        </div>
+        <div style="width: 40%; text-align: center;" class="loan_calc uk-card uk-card-default uk-card-body uk-margin-left">
+            <a href="{% url 'loan_refinance' %}">Refinance an Existing Loan</a>
+        </div>
+    </div>
+
+     <!-- Additional JS for each `div` to change color when hovered over -->
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll(".loan_calc").forEach(function(element) {
+                element.onmouseover = function() { change_background(this) };
+                element.onmouseout = function() { revert_background(this) };
+            });
+        });
+    </script>
 {% endblock %}
